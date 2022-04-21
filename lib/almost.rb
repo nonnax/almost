@@ -32,7 +32,10 @@ class Almost
     def handler
       Mapper.handler
     end
-  end
+    def before &block
+      app.use Rack::Config, &block
+    end
+  end    
   
   def initialize
     @handler = self.class.handler
@@ -62,13 +65,13 @@ class Almost
       end
     end
   rescue StandardError => e
-    # pp e
     [500, {}, [e.message]]
   end
 
   def session
     env['rack.session'] || raise('Missing middleware, add: use Rack::Session::Cookie')
   end
+  
   module Mapper
     D = Object.method(:define_method)
     D[:erb] {|text, **locals| ERB.new(text).result_with_hash(locals)}
