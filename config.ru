@@ -3,6 +3,8 @@
 require_relative 'lib/almost'
 require 'json'
 
+pj=JSON.method(:pretty_generate)
+
 use Rack::Static, :urls => ["/css"], :root=>'public'
 
 settings[:render][:layout]='view/layout.erb'
@@ -36,7 +38,7 @@ post( '/hey' ) {'Post Hey'}
 
 handle('404'){ 'Not here'}
 
-pp Almost.handler
+puts JSON.pretty_generate(Almost.handler)
 
 run Almost.new
 

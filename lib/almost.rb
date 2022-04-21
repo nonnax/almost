@@ -13,8 +13,8 @@ class Almost
     .then{|p| /^(#{p})\/?$/ } 
   }
   H=Hash.new{|h,k| h[k]=k.transform_keys(&:to_sym)}
-
-  attr_reader :handler, :res, :req, :env
+  @settings = Hash.new{|h,k| h[k]={}}
+  @handler = Hash.new { |h, k| h[k] = {} }
   class<<self
     alias _new new
     def new
@@ -23,23 +23,16 @@ class Almost
         run Almost._new
       end
     end
-    def app(&block)
-      @app ||= Rack::Builder.new(&block)
-    end
-    def use(m, *a, **h, &block)
-      app.use m, *a, **h, &block
-    end
-    def handler
-      Mapper.handler
-    end
-    def settings
-      @settings ||= Hash.new{|h,k| h[k]={}}
-    end
+    def app(&block) @app ||= Rack::Builder.new(&block) end
+    def use(m, *a, **h, &block) app.use( m, *a, **h, &block) end
+    def handler; @handler end
+    def settings;  @settings  end
   end    
+
+  attr_reader :handler, :res, :req, :env
   
   def initialize
     @handler = self.class.handler
-    # self.class.
   end
   
   def call(env)
@@ -71,19 +64,21 @@ class Almost
       res.write body
     end
     res.finish
-  end
+  end  
 
   module Mapper
-    D[:handler] { @handler ||= Hash.new { |h, k| h[k] = {} } }
-    D[:settings] { Almost.settings }
+    D[:handler]{  Almost.handler  }
+    D[:settings]{ Almost.settings }
     %w[get post put delete handle].map do |m| 
-      D[m]{ |u, &b| Mapper.handler[PATTERN[u]][m.upcase] = b } 
+      D[m]{ |u, &b| Almost.handler[PATTERN[u]][m.upcase] = b } 
     end
-    D[:file]{|f| File.read File.join(Almost.settings[:render][:views], "#{f}.erb" ) }
   end
+  
+  # default settinss
+  settings[:render][:layout]='views/layout.erb'
+  settings[:render][:views]='views/'
   
 end
 
 Kernel.include Almost::Mapper
-Almost.settings[:render][:layout]='views/layout.erb'
-Almost.settings[:render][:views]='views/'
+
