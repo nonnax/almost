@@ -71,7 +71,7 @@ class Almost
   end
   module Mapper
     D = Object.method(:define_method)
-    # D[:new] { Rack::Builder.new{ run Almost.new }}
+    D[:erb] {|text, **locals| ERB.new(text).result_with_hash(locals)}
     D[:handler] { @handler ||= Hash.new { |h, k| h[k] = {} } }
     %w[get post put delete handle].map do |m| 
       D[m]{ |u, &b| Mapper.handler[PATTERN[u]][m.upcase] = b } 

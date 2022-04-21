@@ -3,8 +3,8 @@
 require 'almost'
 
 get( '/:room/:id' ) { |room, id, params|
-  session[:name]
-  [room, id, params, session.inspect].join(' ')
+  session[:name]='almost'
+  erb [room, id, params, '{user:[<%=name%>]}'].join(' '), name: session[:name]
 }
 
 handle('404'){ 'Not here'}

@@ -8,7 +8,6 @@ get( '/login' ) { |param|
   session[:name] ||= param[:name] || 'nald'
 }
 get( '/' ) { |param|
-  # save once
   unless session[:name] 
     res.redirect '/login'
   else
@@ -22,7 +21,7 @@ get( '/:hey' ) { |hey, params|
 
 get( '/:room/:id' ) { |room, id, params|
   session[:name]
-  [room, id, params, session.inspect].join(' ')
+  erb [room, id, params, '{user:[<%=name%>]}'].join(' '), name: session[:name]
 }
 post( '/hey' ) {'Post Hey'}
 
