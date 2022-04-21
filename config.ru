@@ -3,8 +3,6 @@
 require_relative 'lib/almost'
 require 'json'
 
-pj=JSON.method(:pretty_generate)
-
 use Rack::Static, :urls => ["/css"], :root=>'public'
 
 settings[:render][:layout]='view/layout.erb'
