@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-04-02 21:55:16 +0800
 require_relative 'lib/almost'
-use Rack::Session::Cookie, secret: SecureRandom.hex(64)
+# use Rack::Session::Cookie, secret: SecureRandom.hex(64)
 use Rack::Static, :urls => ["/css"], :root=>'public'
 
 get( '/' ) {

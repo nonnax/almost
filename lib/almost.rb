@@ -39,11 +39,12 @@ class App
       end
     end
   rescue StandardError => e
-    pp e
+    # pp e
+    [500, {}, [e.message]]
   end
 
   def session
-    req.session
+    env['rack.session'] || raise('Missing middleware, add: use Rack::Session::Cookie')
   end
 end
 
