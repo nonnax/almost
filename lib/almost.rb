@@ -29,17 +29,23 @@ class Almost
     def use(m, *a, **h, &block)
       app.use m, *a, **h, &block
     end
+    def handler
+      Mapper.handler
+    end
   end
   
   def initialize
-    @handler = Mapper.handler
+    @handler = self.class.handler
   end
   
   def default
     res.status = 200
     unless yield 
       res.status = 404
-      res.write 'Not Found'
+      not_found=handler[ PATTERN[res.status.to_s] ]['HANDLE']
+      body=instance_eval(&not_found) if not_found.respond_to?(:call) 
+      body ||= 'Not Found'
+      res.write body
     end
     res.finish
   end
@@ -67,7 +73,7 @@ class Almost
     D = Object.method(:define_method)
     # D[:new] { Rack::Builder.new{ run Almost.new }}
     D[:handler] { @handler ||= Hash.new { |h, k| h[k] = {} } }
-    %w[get post put delete].map do |m| 
+    %w[get post put delete handle].map do |m| 
       D[m]{ |u, &b| Mapper.handler[PATTERN[u]][m.upcase] = b } 
     end
   end

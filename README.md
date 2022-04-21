@@ -7,5 +7,7 @@ get( '/:room/:id' ) { |room, id, params|
   [room, id, params, session.inspect].join(' ')
 }
 
+handle('404'){ 'Not here'}
+
 run Almost.new
 ```

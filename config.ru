@@ -26,5 +26,9 @@ get( '/:room/:id' ) { |room, id, params|
 }
 post( '/hey' ) {'Post Hey'}
 
-# pp Almost.handler
+handle('404'){ 'Not here'}
+
+pp Almost.handler
+
 run Almost.new
+
